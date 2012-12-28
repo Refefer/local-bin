@@ -1,0 +1,26 @@
+#!/usr/bin/python
+import sys
+from urlparse import unquote, urlparse
+import cgi
+import pprint
+
+def get_params(query):
+    params =  {}
+    for k,v in cgi.parse_qs(query).iteritems():
+        if len(v) == 1:
+            v = v[0]
+        params[k] = unquote(v)
+
+    return params
+
+if __name__ == '__main__':
+    print
+#    for url in sys.argv[1:]:
+#        uurl = urlparse.unquote(url)
+#        pieces = urlparse.urlparse(uurl)
+#        print '%s://%s%s' % (pieces.scheme,pieces.netloc, pieces.path)
+#        pprint.pprint(get_params(pieces.query))
+    for url in sys.argv[1:]:
+        pieces = urlparse(url)
+        print '%s://%s%s' % (pieces.scheme,pieces.netloc, pieces.path)
+        pprint.pprint(get_params(pieces.query))

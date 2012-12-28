@@ -1,0 +1,47 @@
+#!/usr/bin/python
+import optparse
+import sys
+import os
+import shutil
+
+def build_parser():
+   parser = optparse.OptionParser() 
+   parser.add_option('-l', '--license',
+                     default= '-',
+                     dest   = 'license_file',
+                     help   = "License file to use. Defaults to std")
+
+   parser.add_option('-p', '--prefix',
+                     dest   = 'prefix',
+                     default= '',
+                     help   = "Prefixes each line of the license with a string.")
+
+   return parser
+
+def get_license(fname, prefix):
+    if fname == '-':
+        f = sys.stdin
+    else:
+        f = file(fname)
+    try:
+        return ''.join('%s%s' % (prefix, line) for line in f) + '\n'
+    finally:
+        f.close()
+
+if __name__ == '__main__':
+    parser = build_parser()
+    opts, files = parser.parse_args()
+    license = get_license(opts.license_file, opts.prefix)
+    for fname in files:
+        # Back it up
+        tmp = fname + '.tmp'
+        shutil.copy(fname, tmp)
+        with file(tmp, 'w') as out:
+            out.write(license)
+            with file(fname) as fin:
+                data = fin.read(4096)
+                while data:
+                    out.write(data)
+                    data = fin.read(4096)
+
+        os.rename(tmp, fname)
