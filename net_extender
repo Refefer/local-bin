@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ $(whoami) != "root" ]; then
+    sudo $0
+    exit 0
+fi
+mv /etc/resolv.conf /etc/resolv.conf.bak
+netExtenderGui
+mv /etc/resolv.conf.bak /etc/resolv.conf
